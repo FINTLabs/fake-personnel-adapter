@@ -5,13 +5,15 @@ springfox:
  title: '@title@'
  version: '@version@'
 
-base-url: https://beta.felleskomponent.no/administrasjon/personal/provider
+
 fint:
  adapter:
   organizations: fake.no
-  sse-endpoint: ${base-url}/sse/%s
-  status-endpoint: ${base-url}/status
-  response-endpoint: ${base-url}/response
+
+  endpoints:
+   sse: /sse/%s
+   status: /status
+   response: /response
 
  oauth:
   enabled: true
