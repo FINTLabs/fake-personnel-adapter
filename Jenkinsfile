@@ -14,18 +14,18 @@ pipeline {
                 branch 'master'
             }
             steps {
-                sh "docker tag ${GIT_COMMIT} dtr.fintlabs.no/beta/fake-personnel-adapter:latest"
-                withDockerRegistry([credentialsId: 'dtr-fintlabs-no', url: 'https://dtr.fintlabs.no']) {
-                    sh "docker push 'dtr.fintlabs.no/beta/fake-personnel-adapter:latest'"
+                sh "docker tag ${GIT_COMMIT} fintlabsacr.azurecr.io/fake-personnel-adapter:latest"
+                withDockerRegistry([credentialsId: 'fintlabsacr.azurecr.io', url: 'https://fintlabsacr.azurecr.io']) {
+                    sh "docker push 'fintlabsacr.azurecr.io/fake-personnel-adapter:latest'"
                 }
             }
         }
         stage('Publish PR') {
             when { changeRequest() }
             steps {
-                sh "docker tag ${GIT_COMMIT} dtr.fintlabs.no/beta/fake-personnel-adapter:${BRANCH_NAME}"
-                withDockerRegistry([credentialsId: 'dtr-fintlabs-no', url: 'https://dtr.fintlabs.no']) {
-                    sh "docker push 'dtr.fintlabs.no/beta/fake-personnel-adapter:${BRANCH_NAME}'"
+                sh "docker tag ${GIT_COMMIT} fintlabsacr.azurecr.io/fake-personnel-adapter:${BRANCH_NAME}"
+                withDockerRegistry([credentialsId: 'fintlabsacr.azurecr.io', url: 'https://fintlabsacr.azurecr.io']) {
+                    sh "docker push 'fintlabsacr.azurecr.io/fake-personnel-adapter:${BRANCH_NAME}'"
                 }
             }
         }
