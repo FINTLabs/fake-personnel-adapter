@@ -3,6 +3,9 @@ package no.fint.personnel.data;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.fake.person.PersonGenerator;
+import no.fint.model.administrasjon.kodeverk.Personalressurskategori;
+import no.fint.model.administrasjon.organisasjon.Organisasjonselement;
+import no.fint.model.administrasjon.personal.Personalressurs;
 import no.fint.model.felles.kompleksedatatyper.Kontaktinformasjon;
 import no.fint.model.felles.kompleksedatatyper.Periode;
 import no.fint.model.felles.kompleksedatatyper.Personnavn;
@@ -64,6 +67,7 @@ public class FakeData {
         organisasjonselementResource.setOrganisasjonsKode(personGenerator.identifikator("42"));
         organisasjonselementResource.setNavn("FINTLABS");
         organisasjonselementResource.setOrganisasjonsnummer(personGenerator.identifikator("999999999"));
+        organisasjonselementResource.addOverordnet(Link.with(Organisasjonselement.class, "organisasjonskode", "42"));
         organisasjonselementer.add(organisasjonselementResource);
 
         personer = new ArrayList<>(antallPersoner);
@@ -83,6 +87,7 @@ public class FakeData {
             personalressursResource.setBrukernavn(personGenerator.identifikator(String.format("%s@%s", systemID, orgId)));
             personalressursResource.addPerson(Link.with(PersonResource.class, "fodselsnummer", personResource.getFodselsnummer().getIdentifikatorverdi()));
             personalressursResource.addArbeidsforhold(Link.with(ArbeidsforholdResource.class, "systemid", systemID));
+            personalressursResource.addPersonalressurskategori(Link.with(Personalressurskategori.class, "systemid", "F"));
 
             ArbeidsforholdResource arbeidsforholdResource = new ArbeidsforholdResource();
             arbeidsforholdResource.addPersonalressurs(Link.with(PersonalressursResource.class, "systemid", systemID));
@@ -123,9 +128,12 @@ public class FakeData {
                     avdeling.setNavn("Avdeling " + it);
                     avdeling.addOverordnet(Link.with(OrganisasjonselementResource.class, "organisasjonsnummer", "999999999"));
                     organisasjonselementResource.addUnderordnet(Link.with(OrganisasjonselementResource.class, "organisasjonskode", it));
+                    avdeling.addLeder(Link.with(Personalressurs.class, "ansattnummer", sample(ansatte, random).getAnsattnummer().getIdentifikatorverdi()));
                     return avdeling;
                 }
         ).forEach(organisasjonselementer::add);
+
+        organisasjonselementResource.addLeder(Link.with(Personalressurs.class, "ansattnummer", sample(ansatte, random).getAnsattnummer().getIdentifikatorverdi()));
 
         arbeidsforhold.forEach(e -> {
             OrganisasjonselementResource b = sample(organisasjonselementer, random);
